@@ -84,6 +84,46 @@ void Laborator4::FrameEnd()
 void Laborator4::OnInputUpdate(float deltaTime, int mods)
 {
 	// TODO
+	if (window->KeyHold(GLFW_KEY_W))
+		translateZ -= deltaTime;
+	if (window->KeyHold(GLFW_KEY_D))
+		translateX += deltaTime;
+	if (window->KeyHold(GLFW_KEY_A))
+		translateX -= deltaTime;
+	if (window->KeyHold(GLFW_KEY_S))
+		translateZ += deltaTime;
+	if (window->KeyHold(GLFW_KEY_R))
+		translateY += deltaTime;
+	if (window->KeyHold(GLFW_KEY_F))
+		translateY -= deltaTime;
+	if (window->KeyHold(GLFW_KEY_1)) {
+		scaleX += deltaTime;
+		scaleY += deltaTime;
+		scaleZ += deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_2)) {
+		scaleX -= deltaTime;
+		scaleY -= deltaTime;
+		scaleZ -= deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_3)) {
+		angularStepOX += deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_4)) {
+		angularStepOX -= deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_5)) {
+		angularStepOY += deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_6)) {
+		angularStepOY -= deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_7)) {
+		angularStepOZ += deltaTime;
+	}
+	if (window->KeyHold(GLFW_KEY_8)) {
+		angularStepOZ -= deltaTime;
+	}
 }
 
 void Laborator4::OnKeyPress(int key, int mods)
