@@ -115,26 +115,32 @@ void Laborator5::OnInputUpdate(float deltaTime, int mods)
 
 		if (window->KeyHold(GLFW_KEY_W)) {
 			// TODO : translate the camera forward
+			camera->TranslateForward(deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_A)) {
 			// TODO : translate the camera to the left
+			camera->TranslateRight(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_S)) {
 			// TODO : translate the camera backwards
+			camera->TranslateForward(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_D)) {
 			// TODO : translate the camera to the right
+			camera->TranslateRight(deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_Q)) {
 			// TODO : translate the camera down
+			camera->TranslateUpword(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_E)) {
 			// TODO : translate the camera up
+			camera->TranslateUpword(deltaTime * cameraSpeed);
 		}
 	}
 }
@@ -142,9 +148,57 @@ void Laborator5::OnInputUpdate(float deltaTime, int mods)
 void Laborator5::OnKeyPress(int key, int mods)
 {
 	// add key press event
-	if (key == GLFW_KEY_T)
-	{
+	if (key == GLFW_KEY_T) {
 		renderCameraTarget = !renderCameraTarget;
+	}
+
+	if (key == GLFW_KEY_O) {
+		orthoLeft = -8.0f;
+		orthoRight = 8.0f;
+		orthoUp = 4.5f;
+		orthoDown = -4.5;
+		projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+		isOrtho = true;
+	}
+
+	// increase height
+	if (key == GLFW_KEY_UP && isOrtho) {
+		orthoUp += 0.25f;
+		orthoDown -= 0.25f;
+		projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+	}
+
+	// increase height
+	if (key == GLFW_KEY_DOWN && isOrtho) {
+		orthoUp -= 0.25f;
+		orthoDown += 0.25f;
+		projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+	}
+
+	// increase length
+	if (key == GLFW_KEY_RIGHT && isOrtho) {
+		orthoRight += 0.25f;
+		orthoLeft -= 0.25f;
+		projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+	}
+
+	// decrease length
+	if (key == GLFW_KEY_LEFT && isOrtho) {
+		orthoRight -= 0.25f;
+		orthoLeft += 0.25f;
+		projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+	}
+
+	// inversare FOV
+	if (key == GLFW_KEY_K) {
+		projectionMatrix = glm::perspective(-(float)(M_PI / 3), -window->props.aspectRatio, 0.01f, -200.0f);
+		isOrtho = false;
+	}
+	// FOV normal
+	if (key == GLFW_KEY_P)
+	{
+		projectionMatrix = glm::perspective((float)(M_PI / 3), window->props.aspectRatio, 0.01f, 200.0f);
+		isOrtho = false;
 	}
 }
 
@@ -166,12 +220,16 @@ void Laborator5::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 			renderCameraTarget = false;
 			// TODO : rotate the camera in First-person mode around OX and OY using deltaX and deltaY
 			// use the sensitivity variables for setting up the rotation speed
+			camera->RotateFirstPerson_OX(2 * sensivityOX * deltaY);
+			camera->RotateFirstPerson_OY(2 * sensivityOY * deltaX);
 		}
 
 		if (window->GetSpecialKeyState() && GLFW_MOD_CONTROL) {
 			renderCameraTarget = true;
 			// TODO : rotate the camera in Third-person mode around OX and OY using deltaX and deltaY
 			// use the sensitivity variables for setting up the rotation speed
+			camera->RotateThirdPerson_OX(2 * sensivityOX * deltaY);
+			camera->RotateThirdPerson_OY(2 * sensivityOY * deltaX);
 		}
 
 	}
