@@ -183,6 +183,7 @@ void Laborator2::Update(float deltaTimeSeconds)
 		glCullFace(GL_FRONT);
 	else
 		glCullFace(GL_BACK);
+
 	// render an object using face normals for color
 	RenderMesh(meshes["box"], shaders["VertexNormal"], glm::vec3(0, 0.5f, -1.5f), glm::vec3(0.75f));
 
@@ -191,8 +192,19 @@ void Laborator2::Update(float deltaTimeSeconds)
 	RenderMesh(meshes["tetraedru"], shaders["VertexColor"], glm::vec3(0.5f, 0.5f, 0), glm::vec3(0.25f));
 	RenderMesh(meshes["cube3"], shaders["VertexColor"], glm::vec3(1, 1, 1), glm::vec3(0.50f));
 	RenderMesh(meshes["square"], shaders["VertexColor"], glm::vec3(3, 0, 2), glm::vec3(0.50f));
-
 	// TODO: Disable face culling
+
+	//glClear(GL_COLOR_BUFFER_BIT);
+	// draw a triangle
+	float radius = 0.6f;
+	glBegin(GL_TRIANGLE_FAN);
+	glColor3f(0.2f, 0.7f, 0.1f);
+	glVertex2f(2, 2);
+	for (int i = 0; i <= 360; ++i) {
+		glVertex2f(2 + radius * cos(i * M_PI / 180), 2 + radius * sin(i * M_PI / 180));
+	}
+	glEnd();
+
 	glDisable(GL_CULL_FACE);
 }
 
@@ -215,15 +227,15 @@ void Laborator2::OnKeyPress(int key, int mods)
 	{
 		switch (polygonMode)
 		{
-		case GL_POINT:
-			polygonMode = GL_FILL;
-			break;
-		case GL_LINE:
-			polygonMode = GL_POINT;
-			break;
-		default:
-			polygonMode = GL_LINE;
-			break;
+			case GL_POINT:
+				polygonMode = GL_FILL;
+				break;
+			case GL_LINE:
+				polygonMode = GL_POINT;
+				break;
+			default:
+				polygonMode = GL_LINE;
+				break;
 		}
 	}
 
