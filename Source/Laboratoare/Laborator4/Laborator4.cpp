@@ -74,6 +74,26 @@ void Laborator4::Update(float deltaTimeSeconds)
 	modelMatrix *= Transform3D::RotateOY(angularStepOY);
 	modelMatrix *= Transform3D::RotateOZ(angularStepOZ);
 	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+
+	// solar system
+	sunAngle += deltaTimeSeconds;
+	modelMatrix = glm::mat4(1);
+	modelMatrix *= Transform3D::Translate(0, 2, 2);
+	modelMatrix *= Transform3D::RotateOZ(sunAngle);
+	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+
+	// planet
+	modelMatrix = glm::mat4(1);
+	modelMatrix *= Transform3D::Translate(0, 2, 2);
+	modelMatrix *= Transform3D::RotateOZ(sunAngle);
+	modelMatrix *= Transform3D::Translate(0, -2, -2);
+	modelMatrix *= Transform3D::Translate(0, 8, 2);
+	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+
+	// moon
+	modelMatrix *= Transform3D::RotateOZ(sunAngle);
+	modelMatrix *= Transform3D::Translate(0, 4, 0);
+	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
 }
 
 void Laborator4::FrameEnd()
@@ -84,17 +104,17 @@ void Laborator4::FrameEnd()
 void Laborator4::OnInputUpdate(float deltaTime, int mods)
 {
 	// TODO
-	if (window->KeyHold(GLFW_KEY_W))
+	if (window->KeyHold(GLFW_KEY_W) && moveScreen)
 		translateZ -= deltaTime;
-	if (window->KeyHold(GLFW_KEY_D))
+	if (window->KeyHold(GLFW_KEY_D) && moveScreen)
 		translateX += deltaTime;
-	if (window->KeyHold(GLFW_KEY_A))
+	if (window->KeyHold(GLFW_KEY_A) && moveScreen)
 		translateX -= deltaTime;
-	if (window->KeyHold(GLFW_KEY_S))
+	if (window->KeyHold(GLFW_KEY_S) && moveScreen)
 		translateZ += deltaTime;
-	if (window->KeyHold(GLFW_KEY_R))
+	if (window->KeyHold(GLFW_KEY_R) && moveScreen)
 		translateY += deltaTime;
-	if (window->KeyHold(GLFW_KEY_F))
+	if (window->KeyHold(GLFW_KEY_F) && moveScreen)
 		translateY -= deltaTime;
 	if (window->KeyHold(GLFW_KEY_1)) {
 		scaleX += deltaTime;
@@ -143,6 +163,13 @@ void Laborator4::OnKeyPress(int key, int mods)
 			polygonMode = GL_LINE;
 			break;
 		}
+	}
+
+	if (key == GLFW_KEY_P) {
+		if (moveScreen)
+			moveScreen = false;
+		else
+			moveScreen = true;
 	}
 }
 
