@@ -31,8 +31,8 @@ void Laborator3::Init()
 	float squareSide = 100;
 
 	// compute coordinates of square center
-	cx = corner.x + squareSide / 2;
-	cy = corner.y + squareSide / 2;
+	float cx = corner.x + squareSide / 2;
+	float cy = corner.y + squareSide / 2;
 	
 	// initialize tx and ty (the translation steps)
 	translateX = 0;
@@ -70,60 +70,23 @@ void Laborator3::FrameStart()
 void Laborator3::Update(float deltaTimeSeconds)
 {
 	// TODO: update steps for translation, rotation, scale, in order to create animations
-
+	
 	modelMatrix = glm::mat3(1);
-	modelMatrix *= Transform2D::Translate(150, 400);
-	rotation += deltaTimeSeconds;
+	modelMatrix *= Transform2D::Translate(150, 250);
 	// TODO: create animations by multiplying current transform matrix with matrices from Transform 2D
-	//translateY = -1 * (translateY + deltaTimeSeconds * 100);
-	translateY = 0;
-	if (direction == false) {
-		translateX += deltaTimeSeconds * 300;
-		if (translateX > 400)
-			direction = true;
-	}
-	else if (direction == true) {
-		translateX -= deltaTimeSeconds * 300;
-		if (translateX < 100)
-			direction = false;
-	}
 
-	modelMatrix *= Transform2D::Translate(translateX, translateY);
 	RenderMesh2D(meshes["square1"], shaders["VertexColor"], modelMatrix);
 
 	modelMatrix = glm::mat3(1);
 	modelMatrix *= Transform2D::Translate(400, 250);
-
 	//TODO create animations by multiplying current transform matrix with matrices from Transform 2D
-	angularStep += deltaTimeSeconds * 0.5;
-	modelMatrix *= Transform2D::Rotate(4 * rotation);
-	modelMatrix *= Transform2D::Translate(cx, cy);
-	modelMatrix *= Transform2D::Rotate(4 * angularStep);
-	modelMatrix *= Transform2D::Translate(-cx, -cy);
-
-
-
-
+	
 	RenderMesh2D(meshes["square2"], shaders["VertexColor"], modelMatrix);
 
 	modelMatrix = glm::mat3(1);
 	modelMatrix *= Transform2D::Translate(650, 250);
 
 	//TODO create animations by multiplying current transform matrix with matrices from Transform 2D
-	if (scaleX >= 1)
-		ok = false;
-	if (scaleX < 0.5)
-		ok = true;
-
-	if (ok)
-		scaleX += deltaTimeSeconds;
-	else
-		scaleX -= deltaTimeSeconds;
-
-	modelMatrix *= Transform2D::Translate(cx, cy);
-	modelMatrix *= Transform2D::Scale(scaleX, scaleX);
-	modelMatrix *= Transform2D::Translate(-cx, -cy);
-
 	RenderMesh2D(meshes["square3"], shaders["VertexColor"], modelMatrix);
 }
 

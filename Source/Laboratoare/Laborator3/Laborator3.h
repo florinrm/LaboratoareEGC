@@ -31,8 +31,4 @@ class Laborator3 : public SimpleScene
 		float translateX, translateY;
 		float scaleX, scaleY;
 		float angularStep;
-		float cx, cy;
-		bool ok;
-		bool direction;
-		float rotation = 0;
 };

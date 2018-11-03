@@ -25,13 +25,9 @@ void Laborator1::Init()
 		mesh = new Mesh("box");
 		mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "box.obj");
 		meshes[mesh->GetMeshID()] = mesh;
-		mesh = new Mesh("sphere");
-		mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
-		meshes[mesh->GetMeshID()] = mesh;
-		someMesh = mesh;
-		mesh = new Mesh("trevor_philips");
-		mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "trevor_philips.obj");
-		meshes[mesh->GetMeshID()] = mesh;
+		Mesh *mesh2 = new Mesh("sphere");
+		mesh2->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
+		meshes[mesh2->GetMeshID()] = mesh2;
 	}
 }
 
@@ -45,34 +41,28 @@ void Laborator1::Update(float deltaTimeSeconds)
 	glm::ivec2 resolution = window->props.resolution;
 
 	// sets the clear color for the color buffer
-	if (!isColorChanged)
-		glClearColor(0, 0, 0, 1);
-	else
-		glClearColor(0.5, 0.3, 0.1, 1);
-	/*
-	if (isObjectChanged) {
-		Mesh *copy = new Mesh("teapot");
-		copy->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "teapot.obj");
-		meshes[someMesh->GetMeshID()] = copy;
-	}
-	else {
-		meshes[someMesh->GetMeshID()] = someMesh;
-	} */
+	glClearColor(0, 0, 0, 1);
 
 	// clears the color buffer (using the previously set color) and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (isColorChanged) {
+		glClearColor(0.25f, 0.75f, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	else {
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
 	// sets the screen area where to draw
 	glViewport(0, 0, resolution.x, resolution.y);
 
 	// render the object
-	RenderMesh(meshes["box"], glm::vec3(4, 0.7f, 0), glm::vec3(0.5f));
+	RenderMesh(meshes["box"], glm::vec3(1, 0.5f, 0), glm::vec3(0.5f));
 
 	// render the object again but with different properties
 	RenderMesh(meshes["box"], glm::vec3(-1, 0.5f, 0));
-
-	RenderMesh(meshes["sphere"], glm::vec3(2, 0.5f, 0), glm::vec3(0.7f));
-	RenderMesh(meshes["trevor_philips"], glm::vec3(x, y, z), glm::vec3(0.015f));
+	RenderMesh(meshes["sphere"], glm::vec3(y, z, x), glm::vec3(2));
 
 }
 
@@ -87,22 +77,18 @@ void Laborator1::FrameEnd()
 void Laborator1::OnInputUpdate(float deltaTime, int mods)
 {
 	// treat continuous update based on input
-	if (canBeObjectMoved) {
-		//cout << deltaTime << endl;
-		if (window->KeyHold(GLFW_KEY_W))
-			z -= deltaTime * 2;
-		if (window->KeyHold(GLFW_KEY_A))
-			x -= deltaTime * 2;
-		if (window->KeyHold(GLFW_KEY_S))
-			z += deltaTime * 2;
-		if (window->KeyHold(GLFW_KEY_D))
-			x += deltaTime * 2;
-		if (window->KeyHold(GLFW_KEY_Q))
-			y += deltaTime * 2;
-		if (window->KeyHold(GLFW_KEY_E))
-			y -= deltaTime * 2;
-	}
-
+	if (window->KeyHold(GLFW_KEY_UP))
+		x -= deltaTime;
+	if (window->KeyHold(GLFW_KEY_DOWN))
+		x += deltaTime;
+	if (window->KeyHold(GLFW_KEY_LEFT))
+		y -= deltaTime;
+	if (window->KeyHold(GLFW_KEY_RIGHT))
+		y += deltaTime;
+	if (window->KeyHold(GLFW_KEY_O))
+		z += deltaTime;
+	if (window->KeyHold(GLFW_KEY_P))
+		z -= deltaTime;
 };
 
 void Laborator1::OnKeyPress(int key, int mods)
@@ -110,39 +96,25 @@ void Laborator1::OnKeyPress(int key, int mods)
 	// add key press event
 	if (key == GLFW_KEY_F) {
 		// do something
-		if (isColorChanged)
-			isColorChanged = false;
-		else
-			isColorChanged = true;
+		isColorChanged = true;
+		//std::cout << "muie" << std::endl;
 	}
-	if (key == GLFW_KEY_V) {
-		if (changeObject == 1) {
-			changeObject = 2;
-			Mesh *copy = new Mesh("teapot");
-			copy->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "teapot.obj");
-			meshes[someMesh->GetMeshID()] = copy;
-		} else if (changeObject == 2) {
-			changeObject = 0;
-			Mesh *copy = new Mesh("quad");
-			copy->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "quad.obj");
-			meshes[someMesh->GetMeshID()] = copy;
-		} else {
-			changeObject = 1;
-			meshes[someMesh->GetMeshID()] = someMesh;
-		}
-	}
-	if (key == GLFW_KEY_P) {
-		if (canBeObjectMoved)
-			canBeObjectMoved = false;
-		else
-			canBeObjectMoved = true;
+	if (key == GLFW_KEY_T) {
+		Mesh* mesh2 = new Mesh("sphere");
+		mesh2->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
+		meshes[mesh->GetMeshID()] = mesh2;
 	}
 };
 
 void Laborator1::OnKeyRelease(int key, int mods)
 {
 	// add key release event
-	
+	if (key == GLFW_KEY_F) {
+		isColorChanged = false;
+	}
+	if (key == GLFW_KEY_T) {
+		meshes[mesh->GetMeshID()] = mesh;
+	}
 };
 
 void Laborator1::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)

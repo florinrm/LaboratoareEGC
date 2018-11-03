@@ -7,14 +7,11 @@ class Laborator1 : public SimpleScene
 	public:
 		Laborator1();
 		~Laborator1();
-		bool isColorChanged = false;
-		int changeObject = 0;
-		bool canBeObjectMoved = false;
-		float x = 1, y = 0.5, z = 0;
-		Mesh *mesh;
-		Mesh *someMesh;
 
 		void Init() override;
+		bool isColorChanged = false;
+		float x = 1, y = 2, z = 0;
+		Mesh *mesh;
 
 	private:
 		void FrameStart() override;

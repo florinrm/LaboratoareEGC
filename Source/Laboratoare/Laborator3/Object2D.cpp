@@ -24,8 +24,6 @@ Mesh* Object2D::CreateSquare(std::string name, glm::vec3 leftBottomCorner, float
 		// draw 2 triangles. Add the remaining 2 indices
 		indices.push_back(0);
 		indices.push_back(2);
-		indices.push_back(4);
-		indices.push_back(2);
 	}
 
 	square->InitFromData(vertices, indices);

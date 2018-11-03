@@ -148,26 +148,6 @@ void Laborator3_Vis2D::OnInputUpdate(float deltaTime, int mods)
 {
 	//TODO move the logic window with W, A, S, D (up, left, down, right)
 	//TODO zoom in and zoom out logic window with Z and X
-	if (window->KeyHold(GLFW_KEY_W))
-		logicSpace.y -= deltaTime;
-	if (window->KeyHold(GLFW_KEY_S))
-		logicSpace.y += deltaTime;
-	if (window->KeyHold(GLFW_KEY_A))
-		logicSpace.x += deltaTime;
-	if (window->KeyHold(GLFW_KEY_D))
-		logicSpace.x -= deltaTime;
-	if (window->KeyHold(GLFW_KEY_X)) {
-		logicSpace.height -= 2 * deltaTime;
-		logicSpace.width -= 2 * deltaTime;
-		logicSpace.x += deltaTime;
-		logicSpace.y += deltaTime;
-	}
-	if (window->KeyHold(GLFW_KEY_Z)) {
-		logicSpace.height += 2 * deltaTime;
-		logicSpace.width += 2 * deltaTime;
-		logicSpace.x -= deltaTime;
-		logicSpace.y -= deltaTime;
-	}
 }
 
 void Laborator3_Vis2D::OnKeyPress(int key, int mods)
