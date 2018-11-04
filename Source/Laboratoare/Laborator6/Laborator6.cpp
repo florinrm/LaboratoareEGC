@@ -29,13 +29,13 @@ void Laborator6::Init()
 		vector<VertexFormat> vertices
 		{
 			VertexFormat(glm::vec3(-1, -1,  1), glm::vec3(0, 1, 1), glm::vec3(0.2, 0.8, 0.2)),
-			VertexFormat(glm::vec3( 1, -1,  1), glm::vec3(1, 0, 1), glm::vec3(0.9, 0.4, 0.2)),
+			VertexFormat(glm::vec3(1, -1,  1), glm::vec3(1, 0, 1), glm::vec3(0.9, 0.4, 0.2)),
 			VertexFormat(glm::vec3(-1,  1,  1), glm::vec3(1, 0, 0), glm::vec3(0.7, 0.7, 0.1)),
-			VertexFormat(glm::vec3( 1,  1,  1), glm::vec3(0, 1, 0), glm::vec3(0.7, 0.3, 0.7)),
+			VertexFormat(glm::vec3(1,  1,  1), glm::vec3(0, 1, 0), glm::vec3(0.7, 0.3, 0.7)),
 			VertexFormat(glm::vec3(-1, -1, -1), glm::vec3(1, 1, 1), glm::vec3(0.3, 0.5, 0.4)),
-			VertexFormat(glm::vec3( 1, -1, -1), glm::vec3(0, 1, 1), glm::vec3(0.5, 0.2, 0.9)),
+			VertexFormat(glm::vec3(1, -1, -1), glm::vec3(0, 1, 1), glm::vec3(0.5, 0.2, 0.9)),
 			VertexFormat(glm::vec3(-1,  1, -1), glm::vec3(1, 1, 0), glm::vec3(0.7, 0.0, 0.7)),
-			VertexFormat(glm::vec3( 1,  1, -1), glm::vec3(0, 0, 1), glm::vec3(0.1, 0.5, 0.8)),
+			VertexFormat(glm::vec3(1,  1, -1), glm::vec3(0, 0, 1), glm::vec3(0.1, 0.5, 0.8)),
 		};
 
 		vector<unsigned short> indices =
@@ -97,7 +97,7 @@ Mesh* Laborator6::CreateMesh(const char *name, const std::vector<VertexFormat> &
 
 	// set texture coordinate attribute
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)(2 * sizeof(glm::vec3)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFormat), (void*)(2 * sizeof(glm::vec2)));
 
 	// set vertex color attribute
 	glEnableVertexAttribArray(3);
@@ -132,6 +132,9 @@ void Laborator6::FrameStart()
 
 void Laborator6::Update(float deltaTimeSeconds)
 {
+	// add time for color
+	clock = Engine::GetElapsedTime();
+
 	{
 		glm::mat4 modelMatrix = glm::mat4(1);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0, 1, 0));
@@ -170,18 +173,27 @@ void Laborator6::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & 
 	glUseProgram(shader->program);
 
 	// TODO : get shader location for uniform mat4 "Model"
+	int location_model = glGetUniformLocation(shader->program, "Model");
 
 	// TODO : set shader uniform "Model" to modelMatrix
+	glUniformMatrix4fv(location_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 	// TODO : get shader location for uniform mat4 "View"
+	int location_view = glGetUniformLocation(shader->program, "View");
 
 	// TODO : set shader uniform "View" to viewMatrix
 	glm::mat4 viewMatrix = GetSceneCamera()->GetViewMatrix();
+	glUniformMatrix4fv(location_view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
 	// TODO : get shader location for uniform mat4 "Projection"
+	int location_projection = glGetUniformLocation(shader->program, "Projection");
 
 	// TODO : set shader uniform "Projection" to projectionMatrix
 	glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
+	glUniformMatrix4fv(location_projection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	int location_clock = glGetUniformLocation(shader->program, "Clock");
+	glUniform1f(location_clock, abs(sinf(clock)) + abs(sinf(clock)));
 
 	// Draw the object
 	glBindVertexArray(mesh->GetBuffers()->VAO);

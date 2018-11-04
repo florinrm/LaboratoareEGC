@@ -8,6 +8,7 @@ class Laborator2 : public SimpleScene
 	public:
 		Laborator2();
 		~Laborator2();
+		bool cull = false;
 
 		void Init() override;
 

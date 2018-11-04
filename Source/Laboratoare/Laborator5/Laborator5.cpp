@@ -82,6 +82,38 @@ void Laborator5::Update(float deltaTimeSeconds)
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
 		RenderMesh(meshes["sphere"], shaders["VertexNormal"], modelMatrix);
 	}
+
+	{
+		glm::mat4 modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(5, 1.0f, 0));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.7f));
+		modelMatrix = glm::rotate(modelMatrix, RADIANS(45.0f), glm::vec3(0, 0, 1));
+		RenderMesh(meshes["box"], shaders["Simple"], modelMatrix);
+	}
+
+	{
+		glm::mat4 modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(7, 1.0f, 0));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.5f));
+		modelMatrix = glm::rotate(modelMatrix, RADIANS(30.0f), glm::vec3(0, 1, 1));
+		RenderMesh(meshes["box"], shaders["Simple"], modelMatrix);
+	}
+
+	{
+		glm::mat4 modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0, 2.0f, 0));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+		modelMatrix = glm::rotate(modelMatrix, RADIANS(30.0f), glm::vec3(0, 1, 1));
+		RenderMesh(meshes["teapot"], shaders["VertexNormal"], modelMatrix);
+	}
+
+	{
+		glm::mat4 modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0, 0, 2));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+		modelMatrix = glm::rotate(modelMatrix, RADIANS(30.0f), glm::vec3(0, 1, 1));
+		RenderMesh(meshes["oilTank"], shaders["Simple"], modelMatrix);
+	}
 }
 
 void Laborator5::FrameEnd()
@@ -115,26 +147,81 @@ void Laborator5::OnInputUpdate(float deltaTime, int mods)
 
 		if (window->KeyHold(GLFW_KEY_W)) {
 			// TODO : translate the camera forward
+			camera->TranslateForward(deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_A)) {
 			// TODO : translate the camera to the left
+			camera->TranslateRight(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_S)) {
 			// TODO : translate the camera backwards
+			camera->TranslateForward(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_D)) {
 			// TODO : translate the camera to the right
+			camera->TranslateRight(deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_Q)) {
 			// TODO : translate the camera down
+			camera->TranslateUpword(-deltaTime * cameraSpeed);
 		}
 
 		if (window->KeyHold(GLFW_KEY_E)) {
 			// TODO : translate the camera up
+			camera->TranslateUpword(deltaTime * cameraSpeed);
+		}
+
+		if (window->KeyHold(GLFW_KEY_O)) {
+			orthoLeft = -8.0f;
+			orthoRight = 8.0f;
+			orthoUp = 4.5f;
+			orthoDown = -4.5;
+			projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+			isOrtho = true;
+		}
+
+		// increase height
+		if (window->KeyHold(GLFW_KEY_UP) && isOrtho) {
+			orthoUp += deltaTime;
+			orthoDown -= deltaTime;
+			projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+		}
+
+		// increase height
+		if (window->KeyHold(GLFW_KEY_DOWN) && isOrtho) {
+			orthoUp -= deltaTime;
+			orthoDown += deltaTime;
+			projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+		}
+
+		// increase length
+		if (window->KeyHold(GLFW_KEY_RIGHT) && isOrtho) {
+			orthoRight += deltaTime;
+			orthoLeft -= deltaTime;
+			projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+		}
+
+		// decrease length
+		if (window->KeyHold(GLFW_KEY_LEFT) && isOrtho) {
+			orthoRight -= deltaTime;
+			orthoLeft += deltaTime;
+			projectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoDown, orthoUp, 0.0f, 200.0f);
+		}
+
+		// inversare FOV
+		if (window->KeyHold(GLFW_KEY_K)) {
+			projectionMatrix = glm::perspective(-90.f, -2.f, 2.f, -200.0f);
+			isOrtho = false;
+		}
+		// FOV normal
+		if (window->KeyHold(GLFW_KEY_P))
+		{
+			projectionMatrix = glm::perspective(90.f, 2.f, 2.f, 200.0f);
+			isOrtho = false;
 		}
 	}
 }
@@ -142,10 +229,10 @@ void Laborator5::OnInputUpdate(float deltaTime, int mods)
 void Laborator5::OnKeyPress(int key, int mods)
 {
 	// add key press event
-	if (key == GLFW_KEY_T)
-	{
+	if (key == GLFW_KEY_T) {
 		renderCameraTarget = !renderCameraTarget;
 	}
+
 }
 
 void Laborator5::OnKeyRelease(int key, int mods)
@@ -166,12 +253,16 @@ void Laborator5::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 			renderCameraTarget = false;
 			// TODO : rotate the camera in First-person mode around OX and OY using deltaX and deltaY
 			// use the sensitivity variables for setting up the rotation speed
+			camera->RotateFirstPerson_OX(-2 * sensivityOX * deltaY);
+			camera->RotateFirstPerson_OY(-2 * sensivityOY * deltaX);
 		}
 
 		if (window->GetSpecialKeyState() && GLFW_MOD_CONTROL) {
 			renderCameraTarget = true;
 			// TODO : rotate the camera in Third-person mode around OX and OY using deltaX and deltaY
 			// use the sensitivity variables for setting up the rotation speed
+			camera->RotateThirdPerson_OX(-2 * sensivityOX * deltaY);
+			camera->RotateThirdPerson_OY(-2 * sensivityOY * deltaX);
 		}
 
 	}

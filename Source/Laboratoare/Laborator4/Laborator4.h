@@ -13,6 +13,7 @@ class Laborator4 : public SimpleScene
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
+		bool moveScreen = false;
 
 		void OnInputUpdate(float deltaTime, int mods) override;
 		void OnKeyPress(int key, int mods) override;
@@ -28,5 +29,6 @@ class Laborator4 : public SimpleScene
 		float translateX, translateY, translateZ;
 		float scaleX, scaleY, scaleZ;
 		float angularStepOX, angularStepOY, angularStepOZ;
+		float sunAngle;
 		GLenum polygonMode;
 };

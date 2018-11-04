@@ -8,6 +8,9 @@ class Laborator5 : public SimpleScene
 		Laborator5();
 		~Laborator5();
 
+		bool isOrtho = false;
+		float orthoRight = 8.0f, orthoUp = 4.5f, orthoDown = -4.5f, orthoLeft = -8.0f;
+
 		void Init() override;
 
 	private:
