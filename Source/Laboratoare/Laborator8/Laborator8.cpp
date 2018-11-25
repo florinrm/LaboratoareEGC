@@ -18,6 +18,7 @@ Laborator8::~Laborator8()
 
 void Laborator8::Init()
 {
+	angle = RADIANS(30);
 	{
 		Mesh* mesh = new Mesh("box");
 		mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "box.obj");
@@ -63,7 +64,7 @@ void Laborator8::FrameStart()
 
 	glm::ivec2 resolution = window->GetResolution();
 	// sets the screen area where to draw
-	glViewport(0, 0, resolution.x, resolution.y);	
+	glViewport(0, 0, resolution.x, resolution.y);
 }
 
 void Laborator8::Update(float deltaTimeSeconds)
@@ -127,6 +128,14 @@ void Laborator8::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & 
 	int light_direction = glGetUniformLocation(shader->program, "light_direction");
 	glUniform3f(light_direction, lightDirection.x, lightDirection.y, lightDirection.z);
 
+	// spotlight
+	int isSpot_location = glGetUniformLocation(shader->program, "isSpot");
+	glUniform1i(isSpot_location, isSpot);
+
+	// angle
+	int angle_location = glGetUniformLocation(shader->program, "angle");
+	glUniform1f(angle_location, angle);
+
 	// TODO: Set eye position (camera position) uniform
 	glm::vec3 eyePosition = GetSceneCamera()->transform->GetWorldPosition();
 	int eye_position = glGetUniformLocation(shader->program, "eye_position");
@@ -170,14 +179,13 @@ void Laborator8::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & 
 void Laborator8::OnInputUpdate(float deltaTime, int mods)
 {
 	float speed = 2;
+	glm::vec3 up = glm::vec3(0, 1, 0);
+	glm::vec3 right = GetSceneCamera()->transform->GetLocalOXVector();
+	glm::vec3 forward = GetSceneCamera()->transform->GetLocalOZVector();
+	forward = glm::normalize(glm::vec3(forward.x, 0, forward.z));
 
 	if (!window->MouseHold(GLFW_MOUSE_BUTTON_RIGHT))
 	{
-		glm::vec3 up = glm::vec3(0, 1, 0);
-		glm::vec3 right = GetSceneCamera()->transform->GetLocalOXVector();
-		glm::vec3 forward = GetSceneCamera()->transform->GetLocalOZVector();
-		forward = glm::normalize(glm::vec3(forward.x, 0, forward.z));
-
 		// Control light position using on W, A, S, D, E, Q
 		if (window->KeyHold(GLFW_KEY_W)) lightPosition -= forward * deltaTime * speed;
 		if (window->KeyHold(GLFW_KEY_A)) lightPosition -= right * deltaTime * speed;
@@ -186,11 +194,39 @@ void Laborator8::OnInputUpdate(float deltaTime, int mods)
 		if (window->KeyHold(GLFW_KEY_E)) lightPosition += up * deltaTime * speed;
 		if (window->KeyHold(GLFW_KEY_Q)) lightPosition -= up * deltaTime * speed;
 	}
+
+	if (window->KeyHold(GLFW_KEY_O)) {
+		angle += RADIANS(5) * deltaTime;
+	}
+
+	if (window->KeyHold(GLFW_KEY_P)) {
+		angle -= RADIANS(10) * deltaTime;
+	}
+
+
+	if (window->KeyHold(GLFW_KEY_UP)) {
+		lightDirection -= forward * deltaTime * speed;
+	}
+	if (window->KeyHold(GLFW_KEY_RIGHT)) {
+		lightDirection += right * deltaTime * speed;
+	}
+	if (window->KeyHold(GLFW_KEY_DOWN)) {
+		lightDirection += forward * deltaTime * speed;
+	}
+	if (window->KeyHold(GLFW_KEY_LEFT)) {
+		lightDirection -= right * deltaTime * speed;
+	}
+
+	lightDirection /= sqrt(lightDirection.x * lightDirection.x + lightDirection.y * lightDirection.y + lightDirection.z * lightDirection.z);
+
 }
 
 void Laborator8::OnKeyPress(int key, int mods)
 {
 	// add key press event
+	if (window->KeyHold(GLFW_KEY_F)) {
+		isSpot = (isSpot + 1) % 2;
+	}
 }
 
 void Laborator8::OnKeyRelease(int key, int mods)
